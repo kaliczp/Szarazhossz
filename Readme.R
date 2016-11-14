@@ -10,7 +10,7 @@
 ## definiálták
 
 ## Napi csapadék generálás
-Time <- seq(as.Date("2015-01-01"),as.Date("2016-12-31"),"days")
+Time <- seq(as.Date("2013-01-01"),as.Date("2016-12-31"),"days")
 library(xts)
 TS.xts <- xts(rep.int(0, times=length(Time)), Time)
 csapi <- sample(1:length(Time), size=0.3*length(Time))
@@ -19,8 +19,13 @@ ttbig <- length(TS.xts[TS.xts >100])
 TS.xts[TS.xts >100] <- round(rnorm(ttbig, mean=80, sd=10),1)
 plot(TS.xts,typ="h")
 
-## Nagyobb-e 1 mm-nél
-szarazTS.xts <- TS.xts < 1
-szaraz.diff <- diff(szarazTS.xts)
-szaraz.idx <- which(szaraz.diff == -1)
-max(period.apply(szarazTS.xts, szaraz.idx, sum))
+## Éves száraz hossz számítás
+szarazhossz <- function(x) {
+    ## Nagyobb-e 1 mm-nél 
+    szarazTS.xts <- x < 1
+    szaraz.diff <- diff(szarazTS.xts)
+    szaraz.idx <- which(szaraz.diff == -1)
+    max(period.apply(szarazTS.xts, szaraz.idx, sum))
+}
+
+apply.yearly(TS.xts, szarazhossz)
