@@ -29,3 +29,19 @@ szarazhossz <- function(x) {
 }
 
 apply.yearly(TS.xts, szarazhossz)
+
+## Modell adatok
+p.raw <- scan("PAI/test_P_HUN_2001-2099_JJA.txt")
+
+
+## Dátum generálás
+ttonlyoneyear <- 2001:2099
+ttyears <- rep(ttonlyoneyear, each=92)
+alldate <- as.Date(paste0(ttyears,
+       rep(paste0(c(rep("-06-", 30),rep(c("-07-","-08-"),each=31)),
+              c(1:30,1:31,1:31)
+              ), length(ttonlyoneyear))
+               )
+        )
+
+xts(
