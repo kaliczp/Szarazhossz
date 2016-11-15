@@ -24,6 +24,11 @@ szarazhossz <- function(x) {
     ## Nagyobb-e 1 mm-nél 
     szarazTS.xts <- x < 1
     szaraz.diff <- diff(szarazTS.xts)
+    ## Végére -1, ha az időszak utolsó napjaiban nincs eső
+    if(all(tail(szaraz.diff) == 0)) {
+        szaraz.diff <- c(szaraz.diff, xts(-1,index(tail(szaraz.diff,1))+1))
+        szarazTS.xts <- c(szarazTS.xts,xts(FALSE,index(tail(szarazTS.xts,1))+1))
+    }
     szaraz.idx <- which(szaraz.diff == -1)
     max(period.apply(szarazTS.xts, szaraz.idx, sum))
 }
@@ -45,3 +50,12 @@ alldate <- as.Date(paste0(ttyears,
                    )
 
 p.xts <- xts(p.raw, alldate)
+
+hossz.xts <- apply.yearly(p.xts, szarazhossz)
+write.zoo(hossz.xts, "hossz.csv", sep=";")
+
+pdf()
+plot.xts(hossz.xts, xaxs="i", xaxt="n", main="", ylab="Szárazidőszak [nap]")
+axis.POSIXct(1,at=as.POSIXct(paste0(2000+1:9*10,"-08-30")),format="%Y")
+lines(xts(lowess(hossz.xts)$y, index(hossz.xts)), lwd=2)
+dev.off()
