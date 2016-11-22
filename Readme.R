@@ -30,6 +30,8 @@ szarazhossz <- function(x) {
         szarazTS.xts <- c(szarazTS.xts,xts(FALSE,index(tail(szarazTS.xts,1))+1))
     }
     szaraz.idx <- which(szaraz.diff == -1)
+    ## Ha az elején van hosszabb száraz
+    szaraz.idx <- c(1, szaraz.idx)
     max(period.apply(szarazTS.xts, szaraz.idx, sum))
 }
 
